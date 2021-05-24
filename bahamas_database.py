@@ -9,9 +9,7 @@ import pydeck as pdk
 import os
 import seaborn as sns
 import sqlite3
-import rasterio
 import base64
-from PIL import Image
 import io
 from io import BytesIO
 import streamlit.components.v1 as components
