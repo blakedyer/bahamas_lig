@@ -79,7 +79,7 @@ st.markdown(
 
 
 
-df = pd.read_csv('data/app/field_data_checklist.csv',sep='\t',encoding='utf-7')
+df = pd.read_csv('data/app/field_data_checklist.csv',sep='\t',encoding='utf-8')
 
 GPS=pd.read_csv('data/app/processed_GPS.csv').dropna()
     # GPS
