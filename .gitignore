@@ -1,0 +1,8 @@
+*.pyc
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+*/.pyc/*
+*.pdf
+*.nc
+*.dat
+*.pkl
