@@ -89,13 +89,15 @@ GPS['Appx Height'] = np.round(GPS['Height (MSL)'],2)
 GPS['Appx Height STD'] = np.round(GPS['Height (MSL) STD'],2)
     
 
-section_list = df['Section']
+section_list = df['Comment']
 section_list = [l for l in section_list if l[0]!='.']
 # option = st.select_slider('Which section?',section_list)
 st.sidebar.markdown('## Bahamas Sea Level Field Data Repository')
-option = st.sidebar.select_slider('Slide to select a field location:',section_list,value='B722')
-st.sidebar.markdown('## '+str(option))
-st.sidebar.markdown(str(df[df['Section']==option]['Comment'].values[0]))
+# option = st.sidebar.select_slider('Slide to select a field location:',section_list,value='B722')
+location = st.sidebar.selectbox('Select a field location:',section_list,value='Grotto Beach')
+st.sidebar.markdown('## '+str(location))
+st.sidebar.markdown(str(df[df['Comment']==location]['Comment'].values[0]))
+option = df[df['Comment']==location]['Section']
 
 subdf = df[df['Section']==option]
 desc_str = subdf['Description'].values.astype(str)[0]
@@ -281,21 +283,21 @@ with st.beta_expander("Location and GPS measurements:"):
 
 search_term = 'None'
 with st.beta_expander("Field photos"):
-    sub_term=st.text_input("Filter keywords:", option).lower()
+#     sub_term=st.text_input("Filter keywords:", option).lower()
     
-    keywords=list(keywords)
-    keywords.sort()
-    keywords.insert(0,'None')
+#     keywords=list(keywords)
+#     keywords.sort()
+#     keywords.insert(0,'None')
     
-    filt = [key for key in keywords if sub_term in key.lower()]
-    if option in filt:
-        index=filt.index(option)
-    else:
-        index=0
-    result = st.selectbox('Keyword Select:',filt,index)
+#     filt = [key for key in keywords if sub_term in key.lower()]
+#     if option in filt:
+#         index=filt.index(option)
+#     else:
+#         index=0
+#     result = st.selectbox('Keyword Select:',filt,index)
     
     if st.button('Load photos'):
-        search_term = result
+        search_term = option
         
         conn = sqlite3.connect('data/app/lib_from_darktable.db')
         c = conn.cursor()
