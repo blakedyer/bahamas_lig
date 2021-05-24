@@ -94,7 +94,7 @@ section_list = [l for l in section_list if l[0]!='.']
 # option = st.select_slider('Which section?',section_list)
 st.sidebar.markdown('## Bahamas Sea Level Field Data Repository')
 # option = st.sidebar.select_slider('Slide to select a field location:',section_list,value='B722')
-location = st.sidebar.selectbox('Select a field location:',section_list,value='Grotto Beach')
+location = st.sidebar.selectbox('Select a field location:',section_list,index=0)
 st.sidebar.markdown('## '+str(location))
 st.sidebar.markdown(str(df[df['Comment']==location]['Comment'].values[0]))
 option = df[df['Comment']==location]['Section']
