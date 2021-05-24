@@ -1,7 +1,17 @@
 ## Sea level trends across the Bahamas constrain peak Last Interglacial ice melt
 Repository for Dyer et al. 2021 PNAS
 
+### Installing GIA model outputs and inversion results
 
+There are four archives that should be downloaded from the most recent release of this repository:
+ - The gridded GIA model outputs: **get_GIA.zip**
+     - extract archive contents into `/model_outputs/`
+  - Posterior traces for the LIG data: **lig_inversion.zip**
+     - extract archive contents into `/model_outputs/`
+ - Posterior traces for the synthetic data: **synthetic_test.zip**
+     - extract archive contents into `/model_outputs/`
+ - Posterior traces for the holocene data: **holocene.zip**
+     - extract archive contents into `/model_outputs/`
 
 ### tensorflow
 

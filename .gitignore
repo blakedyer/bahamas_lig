@@ -6,3 +6,4 @@
 *.nc
 *.dat
 *.pkl
+**/*.npy
