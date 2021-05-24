@@ -79,9 +79,9 @@ st.markdown(
 
 
 
-df = pd.read_csv('data/field_data_checklist.csv',sep='\t',encoding='utf-7')
+df = pd.read_csv('data/app/field_data_checklist.csv',sep='\t',encoding='utf-7')
 
-GPS=pd.read_csv('data/processed_GPS.csv').dropna()
+GPS=pd.read_csv('data/app/processed_GPS.csv').dropna()
     # GPS
 GPS['lat']=pd.to_numeric(GPS['Latitude'])
 GPS['lon']=pd.to_numeric(GPS['Longitude'])
@@ -93,7 +93,7 @@ section_list = df['Section']
 section_list = [l for l in section_list if l[0]!='.']
 # option = st.select_slider('Which section?',section_list)
 st.sidebar.markdown('## Bahamas Sea Level Field Data Repository')
-option = st.sidebar.select_slider('Slide to select a field location:',section_list,value='B1112')
+option = st.sidebar.select_slider('Slide to select a field location:',section_list,value='B722')
 st.sidebar.markdown('## '+str(option))
 st.sidebar.markdown(str(df[df['Section']==option]['Comment'].values[0]))
 
@@ -104,11 +104,12 @@ if desc_str == 'nan':
 else:
     st.sidebar.write(desc_str)
     
-conn = sqlite3.connect('lib_from_darktable.db')
+conn = sqlite3.connect('data/app/lib_from_darktable.db')
 c = conn.cursor()
 c.execute('SELECT keywords FROM photos')
 data=c.fetchall()
-keywords=set(' '.join([elt[0] for elt in data]).split(' '))
+#keywords=set(' '.join([elt[0] for elt in data]).split(' '))
+keywords=section_list
 conn.close()
 
 with st.beta_expander("Location and GPS measurements:"):
