@@ -97,7 +97,7 @@ st.sidebar.markdown('## Bahamas Sea Level Field Data Repository')
 
 # def names(option):
 #     return df[df['Section']==]
-option = st.sidebar.selectbox('Select a field location:',section_list,index=0)
+location = st.sidebar.selectbox('Select a field location:',section_list,index=0)
 st.sidebar.markdown('## '+str(location))
 st.sidebar.markdown(str(df[df['Comment']==location]['Comment'].values[0]))
 option = df[df['Comment']==location]['Section'].values[0]
