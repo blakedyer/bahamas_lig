@@ -1,0 +1,26 @@
+
+name: bahamas_lig
+
+channels:
+ - conda-forge
+ - defaults
+
+dependencies:
+ - python
+ - libblas=*=*mkl
+ - mkl-service
+ - mkl_fft
+ - mkl_random
+ - mkl
+ - blas=*=mkl
+ - arviz
+ - ipython
+ - ipywidgets
+ - matplotlib
+ - numpy
+ - pandas
+ - pymc3
+ - scipy
+ - seaborn
+ - theano
+ - tqdm

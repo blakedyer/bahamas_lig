@@ -1,0 +1,12 @@
+Theano_PyMC==1.1.2
+numpy==1.20.1
+scipy==1.6.1
+ipywidgets==7.6.3
+tqdm==4.57.0
+seaborn==0.11.1
+pandas==1.2.2
+pymc3==3.11.1
+matplotlib==3.3.4
+arviz==0.11.2
+ipython==7.21.0
+theano==1.0.5
