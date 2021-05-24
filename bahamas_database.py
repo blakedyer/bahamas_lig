@@ -214,15 +214,15 @@ with st.beta_expander("Location and GPS measurements:"):
     else:
         st.write('No GPS data for this location')
 
-with st.beta_expander("Orthophoto:"):
-#     st.write('only B1123 (jpg, not transparent) and B1112 (png, transparent) orthos uploaded so far')
+# with st.beta_expander("Orthophoto:"):
+# #     st.write('only B1123 (jpg, not transparent) and B1112 (png, transparent) orthos uploaded so far')
     
-    try:
-        HtmlFile = open("ortho_html/"+option+".html", 'r', encoding='utf-8')
-        source_code = HtmlFile.read() 
-        components.html(source_code,height=600)
-    except FileNotFoundError:
-        st.markdown('No orthophoto dataset available (yet). Only B1112 and B1123 available for now.')
+#     try:
+#         HtmlFile = open("ortho_html/"+option+".html", 'r', encoding='utf-8')
+#         source_code = HtmlFile.read() 
+#         components.html(source_code,height=600)
+#     except FileNotFoundError:
+#         st.markdown('No orthophoto dataset available (yet). Only B1112 and B1123 available for now.')
     
 
 
@@ -297,7 +297,7 @@ with st.beta_expander("Field photos"):
     if st.button('Load photos'):
         search_term = result
         
-        conn = sqlite3.connect('lib_from_darktable.db')
+        conn = sqlite3.connect('data/app/lib_from_darktable.db')
         c = conn.cursor()
 
         sqlite_select_query = "SELECT filename, w, h, timestamp FROM photos WHERE keywords LIKE ?"
@@ -410,8 +410,8 @@ with st.beta_expander("Field photos"):
 
 # components.html(source_code,scrolling=True,height=600
 # )
-with st.beta_expander("3D Asset (testing)"):
-    components.iframe("http://www.blakedyer.com/models/B1112.html",height=600)
+with st.beta_expander("3D Asset"):
+    components.iframe("http://www.blakedyer.com/models/"+option+".html",height=600)
 
 
 
