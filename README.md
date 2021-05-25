@@ -13,7 +13,7 @@ The seas are rising as the planet warms, and reconstructions of past sea level p
 
 ### Installing GIA model outputs and inversion results
 
-There are four archives that should be downloaded from the most recent release of this repository:
+There are four archives that should be downloaded from the most recent [release](https://github.com/blakedyer/bahamas_lig/releases) of this repository:
  - The gridded GIA model outputs: **get_GIA.zip**
      - extract archive contents into `/model_outputs/`
   - Posterior traces for the LIG data: **lig_inversion.zip**
