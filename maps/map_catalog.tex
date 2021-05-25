@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage{pdfpages}
+\usepackage{tocloft}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks,
+	% 	citecolor=black,
+	% 	filecolor=black,
+	linkcolor=cyan,
+	% 	urlcolor=black
+}
+
+\usepackage{geometry}
+
+\makeatletter
+\let\latexl@subsection\l@subsection
+\def\l@subsection#1#2{\begingroup\let\numberline\@gobble\latexl@subsection{#1}{#2}\endgroup}
+\makeatother
+
+\renewcommand{\cftbeforesubsecskip}{1.5em}
+
+\begin{document}
+\renewcommand\contentsname{\Large Neural Network Generated Maps of the Bahamian Archipelago}
+
+\tableofcontents
+
+
+\newpage
+\addtolength{\topmargin}{-1.875in}
+
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large Great Abaco Island,1}]{Abaco.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={2,subsection,1,\Large Crooked and Acklins Islands,2}]{Ack.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large North Andros Island,3}]{AndrosN.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large South Andros Island,4}]{AndrosS.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large Turks and Caicos,5}]{Caicos.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large Cat Island,6}]{Cat.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large Eleuthera,7}]{Ele.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large Great Exuma,8}]{Ex.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large Grand Bahama,9}]{Grand.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large Great Inagua,10}]{Ina.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large Long Island,11}]{Long.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large Mayaguana,12}]{Maya.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large New Providence Island,13}]{NP.pdf}
+\includepdf[pages=-,fitpaper,addtotoc={1,subsection,1,\Large San Salvador Island,14}]{SS.pdf}
+\end{document}
