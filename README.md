@@ -1,9 +1,15 @@
 ## Sea level trends across the Bahamas constrain peak Last Interglacial ice melt
 Repository for Dyer et al. 2021 PNAS
 
+The seas are rising as the planet warms, and reconstructions of past sea level provide critical insight into the sensitivity of ice sheets to warmer temperatures. Past sea level is reconstructed from the geologic record by measuring the elevations of fossilized marine sediments and coral reefs. However, the elevations of these features also record local uplift or subsidence due to the growth and decay of ice sheets since the time of deposition. We compare new observations of paleo sea level across the Bahamian archipelago to a range of Earth deformation models to revise estimates of last interglacial global mean sea level. Our results suggest that polar ice sheets may be less sensitive to high latitude warming than previously thought.
+
 ### Associated Web Application
 
 [Follow this link](http://bahamas-lig.herokuapp.com/) to explore field photos and outcrop locations associated with this project.
+
+### How to use this repository
+
+`bahamas_lig/utils.py` contains all of the helper functions defined for the analysis in this paper. These functions are used throughout the included notebooks. The PyMC3 GP Regression model is created in the `inference_model()` function. In the notebooks folder, there are three GP Regression notebooks that illustrate how to use these functions to estimate past sea level.
 
 ### Installing GIA model outputs and inversion results
 
