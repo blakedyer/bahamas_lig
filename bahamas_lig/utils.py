@@ -587,7 +587,7 @@ def inference_model(data, z_functions, keys = ["coral", "highstand"], holocene=F
         ## noise = pm.HalfStudentT('noise',nu=1,sigma=1)
         ## noise = pm.HalfFlat("noise")+0.01
         if not holocene:
-            noise = pm.HalfStudentT('noise',nu=1,sigma=.01)
+            noise = pm.HalfStudentT('noise',nu=1,sigma=.15)
         elif holocene:
             noise = pm.HalfCauchy('noise',beta=5)
         
