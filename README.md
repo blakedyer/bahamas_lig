@@ -8,13 +8,11 @@ Polar temperatures during the Last Interglacial (LIG; ~129-116 ka) were warmer t
 
 This branch adds or modifies a few methods from the main branch of this repository to analyze last interglacial sea level records from Europe. Run inversions from the [GP Regression EU LIG](https://github.com/blakedyer/bahamas_lig/blob/europe_lig/notebooks/GP%20Regression%20EU%20LIG.ipynb) notebook.
 
-### Installing GIA model outputs and inversion results
+### Installing GIA model outputs
 
-There are two archives that should be downloaded from the most recent [release](https://github.com/blakedyer/bahamas_lig/releases) of this repository (on the `europe_lig` branch):
+The GIA models should be downloaded from the latest [release](https://github.com/blakedyer/bahamas_lig/releases) of this repository (on the `europe_lig` branch):
 
 - The gridded GIA model outputs: **GIA_models_EU.zip**
-  - extract archive contents into `/model_outputs/`
-- Posterior traces for the LIG data: **EU_lig_inversion.zip**
   - extract archive contents into `/model_outputs/`
 
 ### Create virtual environment for dependencies
