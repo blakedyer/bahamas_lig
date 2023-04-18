@@ -1,32 +1,21 @@
-## Sea level trends across the Bahamas constrain peak Last Interglacial ice melt
-Repository for Dyer et al. 2021 PNAS
+## Constraining the contribution of the Antarctic Ice Sheet to Last Interglacial sea-level
 
-The seas are rising as the planet warms, and reconstructions of past sea level provide critical insight into the sensitivity of ice sheets to warmer temperatures. Past sea level is reconstructed from the geologic record by measuring the elevations of fossilized marine sediments and coral reefs. However, the elevations of these features also record local uplift or subsidence due to the growth and decay of ice sheets since the time of deposition. We compare new observations of paleo sea level across the Bahamian archipelago to a range of Earth deformation models to revise estimates of last interglacial global mean sea level. Our results suggest that polar ice sheets may be less sensitive to high latitude warming than previously thought.
+Repository for **Barnett et al. 2023**, _Science Advances_
 
-### Associated Web Application
-
-[Follow this link](http://bahamas-lig.herokuapp.com/) to explore field photos and outcrop locations associated with this project.
+Polar temperatures during the Last Interglacial (LIG; ~129-116 ka) were warmer than today, making this time period an important testing ground to better understand how ice sheets respond to warming. Yet it remains debated how much and when the Antarctic and Greenland ice sheets changed during this period. Here we present a combination of new and existing absolutely dated LIG sea-level observations from southwest Britain, northern France, and Denmark. Due to glacial isostatic adjustment (GIA), the LIG Greenland ice melt contribution to sea-level change in this region is small, which allows us to constrain Antarctic ice melt. Combining data and GIA modelling, we find that the Antarctic contribution to LIG global mean sea level peaked early in the interglacial (prior to 125 ka), with a maximum contribution of 5.6 m (50th percentile, 3.3–8.8 m central 68% probability) before declining. Our results support an asynchronous melt history over the LIG, with an early Antarctic contribution followed by later Greenland ice-sheet mass loss.
 
 ### How to use this repository
 
-`bahamas_lig/utils.py` contains all of the helper functions defined for the analysis in this paper. These functions are used throughout the included notebooks. The PyMC3 GP Regression model is created in the `inference_model()` function. In the notebooks folder, there are three GP Regression notebooks that illustrate how to use these functions to estimate past sea level.
+This branch adds or modifies a few methods from the main branch of this repository to analyze last interglacial sea level records from Europe. Run inversions from the [GP Regression EU LIG](https://github.com/blakedyer/bahamas_lig/blob/europe_lig/notebooks/GP%20Regression%20EU%20LIG.ipynb) notebook.
 
 ### Installing GIA model outputs and inversion results
 
-There are four archives that should be downloaded from the most recent [release](https://github.com/blakedyer/bahamas_lig/releases) of this repository:
- - The gridded GIA model outputs: **get_GIA.zip**
-     - extract archive contents into `/model_outputs/`
-  - Posterior traces for the LIG data: **lig_inversion.zip**
-     - extract archive contents into `/model_outputs/`
- - Posterior traces for the synthetic data: **synthetic_test.zip**
-     - extract archive contents into `/model_outputs/`
- - Posterior traces for the holocene data: **holocene.zip**
-     - extract archive contents into `/model_outputs/`
+There are two archives that should be downloaded from the most recent [release](https://github.com/blakedyer/bahamas_lig/releases) of this repository (on the `europe_lig` branch):
 
-### Tensorflow
-
-To run the CNN code using tensorflow follow the steps here, paying special attention to the steps to install CUDA for your machine if you want to use a CUDE enabled GPU for the calculations.
-<https://www.tensorflow.org/install>
+- The gridded GIA model outputs: **GIA_models_EU.zip**
+  - extract archive contents into `/model_outputs/`
+- Posterior traces for the LIG data: **EU_lig_inversion.zip**
+  - extract archive contents into `/model_outputs/`
 
 ### Create virtual environment for dependencies
 
@@ -37,5 +26,3 @@ Use the .yml files with anaconda to create an environment to run the contained c
 (or alternatively with pip)
 
 `pip install -r requirements.txt`
-
-

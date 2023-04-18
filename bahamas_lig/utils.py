@@ -277,12 +277,12 @@ def plot_weights(dataframe, experiments, value, synthetic = False, holocene = Fa
     return fig
 
 
-def get_model_status(inference_dir,model_dir):
+def get_model_status(inference_dir,model_dir,year=2021):
 
-    model_posterior_dir = str(inference_dir)+'/'+str('arviz_traces_2021')
+    model_posterior_dir = str(inference_dir)+'/'+str(f'arviz_traces_{year}')
     model_posterior_list=[o[:-3] for o in os.listdir(model_posterior_dir) if '.nc' in o]
 
-    model_predict_dir = str(inference_dir)+'/'+str('pymc3_post_predict_2021')
+    model_predict_dir = str(inference_dir)+'/'+str(f'pymc3_post_predict_{year}')
     model_predict_list=[o[:-4] for o in os.listdir(model_predict_dir) if '.pkl' in o]
 
     model_files_dir = str(model_dir)
@@ -935,4 +935,188 @@ def clear_edges(im, side_size, non_val=-1):
     im[:, : int(side_size / 2)] = non_val
     im[:, -1 * int(side_size / 2) :] = non_val
     return im
+    
+def inference_model_new(data, z_functions, keys = ["coral", "highstand"], holocene=False):
+    """
+    Create the PyMC3 GP regression model.
+
+    Parameters
+    ----------
+    data: Pandas.DataFrame
+        A pandas dataframe containing at least age, age_uncertainty, elevation, elevation_uncertainty, 
+        and type fields. If type is coral, water depth max (m) and water depth mean (m) should be set
+        according to the species or outcrop context.
+    z_functions: scipy.UnivariateSpline
+        Interpolation functions for the GIA curve over time at each sample location for the specified GIA
+        model.
+    keys: list
+        A list of the unique sample 'types' from data that should be included in this inference model.
+    
+    Returns
+    -------
+    model: pymc3.Model
+        PyMC Model object
+    gp: pymc3.gp.Marginal
+        The gaussian process prior for this model. The gp object is used to generate posterior predictions
+        across the LIG.
+
+    """
+    
+    with pm.Model(check_bounds=False) as model: #create pymc3 model
+        
+        
+        #### Create Gaussian Process Prior
+        #### LIG
+        if not holocene:
+            ## hyper-parameters
+            gp_ls = pm.Wald("gp_ls", mu=2, lam=5, shape=1) #lengthscale of covariance kernel
+            gp_var = pm.Normal("gp_var", mu=0, sd=50, shape=1) #variance of covariance kernel
+            m_gmsl = pm.Normal("m_gmsl", 0, 200) #mean gmsl
+
+            ## mean and covariance functions
+            mean_fun = pm.gp.mean.Constant(m_gmsl) #mean function for gp
+            cov1 = gp_var[0]**2 * pm.gp.cov.ExpQuad(1, gp_ls[0]) #cov kernel. variance forced to positive
+
+            ## GP prior
+            gp = pm.gp.Marginal(mean_func=mean_fun,cov_func=cov1) #gp prior
+        #### Holocene
+        elif holocene:
+            ## For holocene we force GMSL deviation from ESL curve to 0
+            mean_fun = pm.gp.mean.Constant(0)
+            gp = pm.gp.Marginal(mean_func=mean_fun, cov_func=pm.gp.cov.Constant(0))
+            
+        #### Create sample elevation priors
+        ELEVATION = shared(data["elevation"].values)
+        ELEVATION_U = shared(data["elevation_uncertainty"].values)
+        elevations_sd = pm.Normal("elev_sd", 0, 1, shape=(data['age'].size))
+        elevations = pm.Deterministic("elev", ELEVATION + elevations_sd * ELEVATION_U)
+        
+        #### Create sample age priors
+        age_sd = {}
+        age = {}
+        ## Loop through each data type in keys
+        for key in keys: 
+            type_filter = data["type"].values == key
+            AGE = data[type_filter]["age"].values
+            AGE_U = data[type_filter]["age_uncertainty"].values
+            N = data[type_filter]["age"].size
+            
+            # age priors by data type
+            if (key == "coral" or key == "index" or key == "limiting"): #normal age errors for LIG ONLY corals or index points
+                if not holocene: ## normal ages bounded by GIA model LIG bounds
+                    BoundedNormal = pm.Bound(pm.Normal, lower=117, upper=128)
+                    age[key] = BoundedNormal(str(key + "_age"), mu=shared(AGE), sd=shared(AGE_U), shape=(N))
+                elif holocene: ## unbounded normal ages used in holocene fitting
+                    age_sd[key] = pm.Normal(str(key + "_age_sd"), 0, 1, shape=(N))
+                    age[key] = pm.Deterministic(
+                        str(key + "_age"), shared(AGE) + age_sd[key] * shared(AGE_U)
+                    ) 
+        
+            elif (key == "highstand" or key == "highstand_marine"):
+                age_sd[key] = pm.Wald(str(key + "_age_sd"), mu=2, lam=5, shape=(N), testval=.1)
+                age[key] = pm.Deterministic(
+                    str(key + "_age"), shared(AGE)-1 + age_sd[key]
+                )  # reshaped to improve Hamiltonian Monte Carlo, likely not needed in new version
+            else:
+                print("data type not implemented or key error, check dataframe")
+
+        ## collect ages from all types of data
+        ages = [age[x] for x in keys]
+        ages = pm.Deterministic("ages", tt.concatenate(ages))
+
+        #### GIA corrections for each sample
+        ## One correction per sample
+        N = data["age"].size
+        GIA = tt.zeros(N, dtype="float64")
+        
+        ## interpolate the fixed time-step model runs to the estimated GIA at sampled age
+        for i in range(N):
+            GIA = tt.set_subtensor(GIA[i], SplineWrapper(z_functions[i])(ages[i]))
+            
+        ## Collect GIA corrections to be logged into trace
+        gia_collect = pm.Deterministic(
+            "GIA", GIA
+        )
+
+        #### Priors for water depth or indicative range for each sample type in keys
+        water_depth_sd = {}
+        water_depth = {}
+        ## Loop through each data type in keys
+        for key in keys:
+            type_filter = data["type"].values == key
+            N = data[type_filter]["age"].size
+            if key == "coral":
+                mean = 2
+                lam=5 
+                max_depth= data[type_filter]["water depth max (m)"]
+                rescale = max_depth/lam
+                mean_conversion = data[type_filter]["water depth mean (m)"]/rescale
+                lam = np.ones(N)*lam
+                water_depth[key] = pm.Wald(
+                    str(key + "_water_depth"), mu=mean, lam=lam, shape=(N)
+                )
+                water_depth[key]=water_depth[key]*rescale
+            
+            elif (key == "marine" or key == "highstand_marine"):
+                water_depth[key] = pm.HalfFlat(str(key + "_water_depth"), shape=(N))
+                
+            elif key == "limiting":
+                mean = 2
+                lam=5 
+  
+                water_depth[key] = pm.Wald(
+                    str(key + "_water_depth"), mu=mean, lam=lam, shape=(N)
+                )
+                water_depth[key]=-1*(water_depth[key]-1.15) #negative to make terrestrial, 1.15 sets max_like at 0
+
+
+            elif (key == "highstand" or key == "index"): #no added water depth
+                water_depth[key] = pm.Deterministic(
+                    str(key + "_water_depth"), shared(np.zeros(N))
+                )
+            else:
+                print("data type not implemented or key error, check dataframe")
+
+        ## long term subsidence
+        N=data["elevation"].values.size
+        uplift = pm.Normal("uplift_master", 0, 1)
+        uplift = np.ones(N)*uplift * shared(data["uplift_rate (std)"].values) + shared(data["uplift_rate (per ky)"].values)
+        uplift = uplift*ages.flatten() ##had /1000 here for last iteration
+        uplift_for_each = pm.Deterministic("uplift",uplift)
+#         ## collect all through concat
+#         water_depths = [water_depth[x] for x in keys]
+#         water_depths = pm.Deterministic("water_depths", tt.concatenate(water_depths))
+        
+        ## collect water depths for logging to trace
+        water_depths = [water_depth[x] for x in keys]
+        water_depths = pm.Deterministic("water_depths", tt.concatenate(water_depths))
+        
+       
+
+        #### The Master Equation:
+        # GMSL = Elevation observation +/- elevation uncertainty +/- water depth - GIA + SUBSIDENCE
+        # keep in mind we're solving for change in GMSL from the GMSL used in GIA model, which is zero
+                
+        gmsl_points = pm.Deterministic(
+            "gmsl_points", elevations - uplift + water_depths - GIA.flatten()
+        )
+        
+        ## 'Geologic' noise -- or noise that is not fit by the model.
+
+        ## noise = pm.InverseGamma('noise',alpha=3,beta=1,testval=.5)
+        ## These two choices could be considered if you expect quite a bit more un-explained variance
+        ## noise = pm.HalfStudentT('noise',nu=1,sigma=1)
+        ## noise = pm.HalfFlat("noise")+0.01
+        noise = pm.HalfCauchy('noise',beta=5)
+        
+        ## Here we fit the GP defined above to the age and GMSL values sampled by the inference model
+        gmsl_inference = gp.marginal_likelihood(
+            "gmsl",
+            X=ages[:, np.newaxis],
+            y=gmsl_points,
+            shape=((N),),
+            noise=noise,
+        )  # GMSL 
+        
+    return model, gp
 

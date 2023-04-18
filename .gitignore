@@ -7,3 +7,16 @@
 *.dat
 *.pkl
 **/*.npy
+data/processed/rsl_stats_eu.zip
+data/raw/NWEuropeDatabase_v7_JA.xlsx
+data/processed/gmsl_1sig_hi.csv
+data/processed/gmsl_1sig_lo.csv
+data/processed/gmsl_2sig_hi.csv
+data/processed/gmsl_2sig_lo.csv
+data/processed/gmsl_all.csv
+data/processed/gmsl_max_like.csv
+data/processed/model_pairs.csv
+data/processed/time.csv
+data/processed/eu_sample_posterior_ages.csv
+model_outputs/EU_lig_inversion.zip
+model_outputs/GIA_models_EU.zip
